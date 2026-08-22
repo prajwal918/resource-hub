@@ -1807,7 +1807,7 @@ const openBeyond = useCallback(() => {
       </main>
 
       <footer className="site-footer">
-        <span>Compiled Aug 2026 · progress saves to this device only.</span>
+        
         <button className={"reset-btn" + (resetArmed ? " armed" : "")} onClick={handleReset}>
           <RotateCcw size={12} strokeWidth={2.5} />
           {resetArmed ? "Tap again to confirm" : "Reset progress"}
