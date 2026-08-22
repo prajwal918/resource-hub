@@ -14,16 +14,34 @@ function AdminView() {
   const [pin, setPin] = React.useState("");
   const [auth, setAuth] = React.useState(false);
   const [error, setError] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [links, setLinks] = React.useState({ link1: "#", link2: "#" });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (pin === import.meta.env.VITE_ADMIN_PIN) {
-      setAuth(true);
-      setError(false);
-    } else {
+    setLoading(true);
+    setError(false);
+    
+    try {
+      const res = await fetch('/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin })
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        setLinks(data.links);
+        setAuth(true);
+      } else {
+        setError(true);
+        setPin("");
+      }
+    } catch (err) {
       setError(true);
       setPin("");
     }
+    setLoading(false);
   };
 
   if (!auth) {
@@ -37,9 +55,12 @@ function AdminView() {
             value={pin}
             onChange={e => setPin(e.target.value)}
             placeholder="PIN"
+            disabled={loading}
             style={{ padding: "10px", fontSize: "18px", letterSpacing: "5px", width: "250px", textAlign: "center", border: "2px solid var(--ink)" }}
           />
-          <button type="submit" style={{ display: "block", margin: "20px auto", padding: "10px 20px", background: "var(--ink)", color: "#fff", fontWeight: "bold", border: "2px solid var(--ink)", cursor: "pointer" }}>Unlock</button>
+          <button type="submit" disabled={loading} style={{ display: "block", margin: "20px auto", padding: "10px 20px", background: "var(--ink)", color: "#fff", fontWeight: "bold", border: "2px solid var(--ink)", cursor: "pointer" }}>
+            {loading ? "Verifying..." : "Unlock"}
+          </button>
         </form>
         {error && <p style={{ color: "red", marginTop: "10px" }}>Incorrect PIN</p>}
       </div>
@@ -51,9 +72,9 @@ function AdminView() {
       <h1>ADMIN DASHBOARD</h1>
       <p style={{ marginBottom: "30px", color: "var(--ink-2)" }}>Welcome to the admin dashboard.</p>
       
-            <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
         <a 
-          href={import.meta.env.VITE_DRIVE_LINK_1 || "#"} 
+          href={links.link1}
           target="_blank" 
           rel="noopener noreferrer"
           style={{ flex: 1, minWidth: "250px", maxWidth: "350px", padding: "30px", background: "var(--card)", border: "3px solid var(--ink)", boxShadow: "var(--sh)", textDecoration: "none", color: "var(--ink)", transition: "transform 0.2s" }}
@@ -65,7 +86,7 @@ function AdminView() {
         </a>
 
         <a 
-          href={import.meta.env.VITE_DRIVE_LINK_2 || "#"} 
+          href={links.link2}
           target="_blank" 
           rel="noopener noreferrer"
           style={{ flex: 1, minWidth: "250px", maxWidth: "350px", padding: "30px", background: "var(--yellow)", border: "3px solid var(--ink)", boxShadow: "var(--sh)", textDecoration: "none", color: "var(--ink)", transition: "transform 0.2s" }}
@@ -96,7 +117,7 @@ function QpView({ view, setView }) {
             return (
               <a 
                 key={id} 
-                href={import.meta.env.VITE_DRIVE_LINK_1 || "#"}
+                href={"" || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ccard ccard-enter" 
@@ -1092,7 +1113,7 @@ function HomeView({ search, progress, onOpen, onOpenBeyond, onClearSearch, setVi
             <span className="beyond-banner-arrow">→</span>
           </button>
           
-          <a href={import.meta.env.VITE_DRIVE_LINK_1 || "#"} target="_blank" rel="noopener noreferrer" className="beyond-banner" style={{ marginTop: "15px", textDecoration: "none", background: "var(--yellow)", color: "var(--ink)", borderColor: "var(--ink)" }}>
+          <a onClick={(e) => { e.preventDefault(); setView("admin"); }} href="#" className="beyond-banner" style={{ marginTop: "15px", textDecoration: "none", background: "var(--yellow)", color: "var(--ink)", borderColor: "var(--ink)" }}>
             <span className="beyond-banner-ic" style={{ background: "var(--card)" }}>📝</span>
             <span className="beyond-banner-txt">
               <span className="beyond-banner-title">Notes Section</span>
