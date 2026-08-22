@@ -53,7 +53,7 @@ function AdminView() {
       
             <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
         <a 
-          href=(import.meta.env.VITE_DRIVE_LINK_1 || "#") 
+          href={import.meta.env.VITE_DRIVE_LINK_1 || "#"} 
           target="_blank" 
           rel="noopener noreferrer"
           style={{ flex: 1, minWidth: "250px", maxWidth: "350px", padding: "30px", background: "var(--card)", border: "3px solid var(--ink)", boxShadow: "var(--sh)", textDecoration: "none", color: "var(--ink)", transition: "transform 0.2s" }}
@@ -65,7 +65,7 @@ function AdminView() {
         </a>
 
         <a 
-          href=(import.meta.env.VITE_DRIVE_LINK_2 || "#") 
+          href={import.meta.env.VITE_DRIVE_LINK_2 || "#"} 
           target="_blank" 
           rel="noopener noreferrer"
           style={{ flex: 1, minWidth: "250px", maxWidth: "350px", padding: "30px", background: "var(--yellow)", border: "3px solid var(--ink)", boxShadow: "var(--sh)", textDecoration: "none", color: "var(--ink)", transition: "transform 0.2s" }}
@@ -96,7 +96,7 @@ function QpView({ view, setView }) {
             return (
               <a 
                 key={id} 
-                href=(import.meta.env.VITE_DRIVE_LINK_1 || "#")
+                href={import.meta.env.VITE_DRIVE_LINK_1 || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ccard ccard-enter" 
@@ -1092,7 +1092,7 @@ function HomeView({ search, progress, onOpen, onOpenBeyond, onClearSearch, setVi
             <span className="beyond-banner-arrow">→</span>
           </button>
           
-          <a href=(import.meta.env.VITE_DRIVE_LINK_1 || "#") target="_blank" rel="noopener noreferrer" className="beyond-banner" style={{ marginTop: "15px", textDecoration: "none", background: "var(--yellow)", color: "var(--ink)", borderColor: "var(--ink)" }}>
+          <a href={import.meta.env.VITE_DRIVE_LINK_1 || "#"} target="_blank" rel="noopener noreferrer" className="beyond-banner" style={{ marginTop: "15px", textDecoration: "none", background: "var(--yellow)", color: "var(--ink)", borderColor: "var(--ink)" }}>
             <span className="beyond-banner-ic" style={{ background: "var(--card)" }}>📝</span>
             <span className="beyond-banner-txt">
               <span className="beyond-banner-title">Notes Section</span>
