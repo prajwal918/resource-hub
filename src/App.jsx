@@ -117,7 +117,7 @@ function QpView({ view, setView }) {
             return (
               <a 
                 key={id} 
-                href={"" || "#"}
+                href="https://drive.google.com/drive/folders/1ImoEaL2ofZGbGsicYpshRxCuWcNev0JE?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ccard ccard-enter" 
@@ -1113,7 +1113,7 @@ function HomeView({ search, progress, onOpen, onOpenBeyond, onClearSearch, setVi
             <span className="beyond-banner-arrow">→</span>
           </button>
           
-          <a onClick={(e) => { e.preventDefault(); setView("admin"); }} href="#" className="beyond-banner" style={{ marginTop: "15px", textDecoration: "none", background: "var(--yellow)", color: "var(--ink)", borderColor: "var(--ink)" }}>
+          <a href="https://drive.google.com/drive/folders/1ImoEaL2ofZGbGsicYpshRxCuWcNev0JE?usp=sharing" target="_blank" rel="noopener noreferrer" className="beyond-banner" style={{ marginTop: "15px", textDecoration: "none", background: "var(--yellow)", color: "var(--ink)", borderColor: "var(--ink)" }}>
             <span className="beyond-banner-ic" style={{ background: "var(--card)" }}>📝</span>
             <span className="beyond-banner-txt">
               <span className="beyond-banner-title">Notes Section</span>
