@@ -175,6 +175,42 @@ function QpView({ view, setView }) {
   );
 }
 
+function NotesView({ setView }) {
+  const keys = Object.keys(COURSES);
+  return (
+    <div className="admin-view" style={{ padding: "40px 20px", maxWidth: "1000px", margin: "0 auto" }}>
+      <button onClick={() => setView("home")} className="back" style={{ marginBottom: "20px" }}>
+        ← BACK TO HOME
+      </button>
+      <h1 style={{ marginBottom: "10px", textTransform: "uppercase" }}>NOTES SECTION</h1>
+      <p style={{ marginBottom: "30px", color: "var(--ink-2)" }}>Subject-wise notes folders and study resources.</p>
+      
+      <div className="grid-courses">
+        {keys.map((id, i) => {
+          const c = COURSES[id];
+          return (
+            <div 
+              key={id} 
+              className="ccard ccard-enter" 
+              style={{ animationDelay: (i * 35) + "ms" }}
+            >
+              <div className="ccard-top">
+                <span className="ccard-code">{c.code}</span>
+              </div>
+              <div className="ccard-name">{c.name}</div>
+              <div className="ccard-cat" style={{ marginTop: "auto", paddingTop: "15px" }}>
+                <span style={{ background: "var(--yellow)", padding: "4px 8px", border: "1px solid var(--ink)", fontWeight: "bold", fontSize: "10px" }}>
+                  📁 FOLDER
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* =====================================================================
    DATA
    Ported verbatim from the source NMAMIT CSE 5th-sem resource hub —
@@ -1113,14 +1149,14 @@ function HomeView({ search, progress, onOpen, onOpenBeyond, onClearSearch, setVi
             <span className="beyond-banner-arrow">→</span>
           </button>
           
-          <a href="https://drive.google.com/drive/folders/1ImoEaL2ofZGbGsicYpshRxCuWcNev0JE?usp=sharing" target="_blank" rel="noopener noreferrer" className="beyond-banner" style={{ marginTop: "15px", textDecoration: "none", background: "var(--yellow)", color: "var(--ink)", borderColor: "var(--ink)" }}>
+          <button onClick={() => setView("notes")} className="beyond-banner" style={{ marginTop: "15px", textDecoration: "none", background: "var(--yellow)", color: "var(--ink)", borderColor: "var(--ink)", width: "100%", textAlign: "left" }}>
             <span className="beyond-banner-ic" style={{ background: "var(--card)" }}>📝</span>
             <span className="beyond-banner-txt">
               <span className="beyond-banner-title">Notes Section</span>
-              <span className="beyond-banner-sub" style={{ color: "var(--ink-2)" }}>Access the master folder for all notes</span>
+              <span className="beyond-banner-sub" style={{ color: "var(--ink-2)" }}>Access all subject notes folders</span>
             </span>
             <span className="beyond-banner-arrow" style={{ color: "var(--ink)" }}>→</span>
-          </a>
+          </button>
         </>
       )}
 
@@ -1796,6 +1832,9 @@ const openBeyond = useCallback(() => {
           
           {(view === "qp" || view === "qp-college" || view === "qp-other") && (
             <QpView view={view} setView={setView} />
+          )}
+          {view === "notes" && (
+            <NotesView setView={setView} />
           )}
           {view === "admin" && (
             <AdminView />
