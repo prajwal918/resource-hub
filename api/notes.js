@@ -10,14 +10,8 @@ const s3 = new S3Client({
 });
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
+  if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
-  const { pin } = req.body;
-  
-  if (pin !== process.env.SECURE_PIN) {
-    return res.status(401).json({ success: false, message: 'Invalid PIN' });
   }
 
   const bucketName = process.env.AWS_BUCKET_NAME || "clgjogi";

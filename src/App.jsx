@@ -176,65 +176,27 @@ function QpView({ view, setView }) {
 }
 
 function NotesView({ setView }) {
-  const [pin, setPin] = React.useState("");
-  const [auth, setAuth] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
   const [notes, setNotes] = React.useState([]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(false);
-    
-    try {
-      const res = await fetch('/api/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin })
-      });
-      
-      const data = await res.json();
-      if (data.success) {
-        setNotes(data.notes);
-        setAuth(true);
-      } else {
+  React.useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const res = await fetch('/api/notes', { method: 'GET' });
+        const data = await res.json();
+        if (data.success) {
+          setNotes(data.notes);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
         setError(true);
-        setPin("");
       }
-    } catch (err) {
-      setError(true);
-      setPin("");
-    }
-    setLoading(false);
-  };
-
-  if (!auth) {
-    return (
-      <div className="admin-view" style={{ textAlign: "center", padding: "100px 20px" }}>
-        <button onClick={() => setView("home")} className="back" style={{ marginBottom: "20px", display: "inline-block" }}>
-          BACK TO HOME
-        </button>
-        <h2>Secure Notes Access</h2>
-        <p style={{ color: "var(--ink-2)", fontSize: "14px", marginBottom: "20px" }}>Enter the 10-digit PIN to access S3 PDFs.</p>
-        <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-          <input
-            type="password"
-            maxLength={10}
-            value={pin}
-            onChange={e => setPin(e.target.value)}
-            placeholder="PIN"
-            disabled={loading}
-            style={{ padding: "10px", fontSize: "18px", letterSpacing: "5px", width: "250px", textAlign: "center", border: "2px solid var(--ink)" }}
-          />
-          <button type="submit" disabled={loading} style={{ display: "block", margin: "20px auto", padding: "10px 20px", background: "var(--ink)", color: "#fff", fontWeight: "bold", border: "2px solid var(--ink)", cursor: "pointer" }}>
-            {loading ? "Unlocking..." : "Unlock"}
-          </button>
-        </form>
-        {error && <p style={{ color: "red", marginTop: "10px" }}>Incorrect PIN or error fetching.</p>}
-      </div>
-    );
-  }
+      setLoading(false);
+    };
+    fetchNotes();
+  }, []);
 
   return (
     <div className="admin-view" style={{ padding: "40px 20px", maxWidth: "1000px", margin: "0 auto" }}>
@@ -244,7 +206,11 @@ function NotesView({ setView }) {
       <h1 style={{ marginBottom: "10px", textTransform: "uppercase" }}>NOTES SECTION</h1>
       <p style={{ marginBottom: "30px", color: "var(--ink-2)" }}>Directly fetched from AWS S3 Bucket.</p>
       
-      {notes.length === 0 ? (
+      {loading ? (
+        <p>Loading PDFs from S3...</p>
+      ) : error ? (
+        <p style={{ color: "red" }}>Failed to load notes from S3.</p>
+      ) : notes.length === 0 ? (
         <p>No PDFs found in the S3 bucket.</p>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
