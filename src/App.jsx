@@ -175,66 +175,137 @@ function QpView({ view, setView }) {
   );
 }
 
-function NotesView({ setView }) {
-  const [loading, setLoading] = React.useState(true);
+function NotesView({ view, setView }) {
+  const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [notes, setNotes] = React.useState([]);
+  const [selectedFolder, setSelectedFolder] = React.useState(null);
 
-  React.useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const res = await fetch('/api/notes', { method: 'GET' });
-        const data = await res.json();
-        if (data.success) {
-          setNotes(data.notes);
-        } else {
-          setError(true);
-        }
-      } catch (err) {
+  const fetchNotes = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await fetch('/api/notes', { method: 'GET' });
+      const data = await res.json();
+      if (data.success) {
+        setNotes(data.notes);
+      } else {
         setError(true);
       }
-      setLoading(false);
-    };
-    fetchNotes();
-  }, []);
+    } catch (err) {
+      setError(true);
+    }
+    setLoading(false);
+  };
+
+  const renderSubjectGrid = (title) => {
+    const keys = Object.keys(COURSES);
+    return (
+      <div className="admin-view" style={{ padding: "40px 20px", maxWidth: "1000px", margin: "0 auto" }}>
+        <button onClick={() => setView("notes")} className="back" style={{ marginBottom: "20px" }}>
+          BACK TO CATEGORIES
+        </button>
+        <h1 style={{ marginBottom: "30px", textTransform: "uppercase" }}>{title}</h1>
+        
+        <div className="grid-courses">
+          {keys.map((id, i) => {
+            const c = COURSES[id];
+            return (
+              <button 
+                key={id} 
+                onClick={() => {
+                  setSelectedFolder(`${title} - ${c.code}`);
+                  fetchNotes();
+                }}
+                className="ccard ccard-enter" 
+                style={{ animationDelay: (i * 35) + "ms", textDecoration: "none", color: "var(--ink)", textAlign: "left", cursor: "pointer", background: "none", border: "none", padding: 0 }}
+              >
+                <div className="ccard-top">
+                  <span className="ccard-code">{c.code}</span>
+                </div>
+                <div className="ccard-name">{c.name}</div>
+                <div className="ccard-cat" style={{ marginTop: "auto", paddingTop: "15px" }}>
+                  <span style={{ background: "var(--yellow)", padding: "4px 8px", border: "1px solid var(--ink)", fontWeight: "bold", fontSize: "10px" }}>
+                    OPEN FOLDER  
+                  </span>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  if (selectedFolder) {
+    return (
+      <div className="admin-view" style={{ padding: "40px 20px", maxWidth: "1000px", margin: "0 auto" }}>
+        <button onClick={() => { setSelectedFolder(null); setNotes([]); }} className="back" style={{ marginBottom: "20px" }}>
+          BACK TO SUBJECTS
+        </button>
+        <h1 style={{ marginBottom: "10px", textTransform: "uppercase" }}>{selectedFolder}</h1>
+        <p style={{ marginBottom: "30px", color: "var(--ink-2)" }}>Directly fetched from AWS S3 Bucket.</p>
+        
+        {loading ? (
+          <p>Loading PDFs from S3...</p>
+        ) : error ? (
+          <p style={{ color: "red" }}>Failed to load notes from S3.</p>
+        ) : notes.length === 0 ? (
+          <p>No PDFs found in the S3 bucket.</p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {notes.map((note, i) => (
+              <a 
+                key={i}
+                href={note.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "flex", alignItems: "center", padding: "15px", background: "var(--card)", border: "2px solid var(--border)", textDecoration: "none", color: "var(--ink)" }}
+              >
+                <div style={{ flex: 1 }}>
+                  <strong>{note.key}</strong>
+                  <div style={{ fontSize: "12px", color: "var(--ink-3)", marginTop: "5px" }}>
+                    {(note.size / 1024).toFixed(2)} KB &bull; Modified: {new Date(note.lastModified).toLocaleDateString()}
+                  </div>
+                </div>
+                <div style={{ background: "var(--yellow)", padding: "5px 10px", fontSize: "12px", fontWeight: "bold", border: "1px solid var(--ink)" }}>
+                  DOWNLOAD
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (view === "notes-our") return renderSubjectGrid("Our College Notes");
+  if (view === "notes-other") return renderSubjectGrid("Other College Notes");
 
   return (
-    <div className="admin-view" style={{ padding: "40px 20px", maxWidth: "1000px", margin: "0 auto" }}>
+    <div className="admin-view" style={{ padding: "40px 20px", maxWidth: "800px", margin: "0 auto" }}>
       <button onClick={() => setView("home")} className="back" style={{ marginBottom: "20px" }}>
         BACK TO HOME
       </button>
-      <h1 style={{ marginBottom: "10px", textTransform: "uppercase" }}>NOTES SECTION</h1>
-      <p style={{ marginBottom: "30px", color: "var(--ink-2)" }}>Directly fetched from AWS S3 Bucket.</p>
+      <h1 style={{ marginBottom: "30px" }}>NOTES SECTION</h1>
       
-      {loading ? (
-        <p>Loading PDFs from S3...</p>
-      ) : error ? (
-        <p style={{ color: "red" }}>Failed to load notes from S3.</p>
-      ) : notes.length === 0 ? (
-        <p>No PDFs found in the S3 bucket.</p>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {notes.map((note, i) => (
-            <a 
-              key={i}
-              href={note.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: "flex", alignItems: "center", padding: "15px", background: "var(--card)", border: "2px solid var(--border)", textDecoration: "none", color: "var(--ink)" }}
-            >
-              <div style={{ flex: 1 }}>
-                <strong>{note.key}</strong>
-                <div style={{ fontSize: "12px", color: "var(--ink-3)", marginTop: "5px" }}>
-                  {(note.size / 1024).toFixed(2)} KB &bull; Modified: {new Date(note.lastModified).toLocaleDateString()}
-                </div>
-              </div>
-              <div style={{ background: "var(--yellow)", padding: "5px 10px", fontSize: "12px", fontWeight: "bold", border: "1px solid var(--ink)" }}>
-                DOWNLOAD
-              </div>
-            </a>
-          ))}
-        </div>
-      )}
+      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+        <button 
+          onClick={() => setView("notes-our")}
+          style={{ flex: 1, minWidth: "250px", padding: "30px", background: "var(--card)", border: "3px solid var(--ink)", boxShadow: "var(--sh)", cursor: "pointer", textAlign: "left" }}
+        >
+          <h2 style={{ marginBottom: "10px" }}>Our College Notes</h2>
+          <p style={{ color: "var(--ink-2)", fontSize: "14px", margin: 0 }}>View notes specific to our college.</p>
+        </button>
+
+        <button 
+          onClick={() => setView("notes-other")}
+          style={{ flex: 1, minWidth: "250px", padding: "30px", background: "var(--card)", border: "3px solid var(--ink)", boxShadow: "var(--sh)", cursor: "pointer", textAlign: "left" }}
+        >
+          <h2 style={{ marginBottom: "10px" }}>Other College Notes</h2>
+          <p style={{ color: "var(--ink-2)", fontSize: "14px", margin: 0 }}>View notes from other colleges.</p>
+        </button>
+      </div>
     </div>
   );
 }
@@ -1861,8 +1932,8 @@ const openBeyond = useCallback(() => {
           {(view === "qp" || view === "qp-college" || view === "qp-other") && (
             <QpView view={view} setView={setView} />
           )}
-          {view === "notes" && (
-            <NotesView setView={setView} />
+          {(view === "notes" || view === "notes-our" || view === "notes-other") && (
+            <NotesView view={view} setView={setView} />
           )}
           {view === "admin" && (
             <AdminView />
