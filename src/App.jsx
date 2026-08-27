@@ -1212,10 +1212,6 @@ function HomeView({ search, progress, onOpen, onOpenBeyond, onClearSearch, setVi
           <br />
           <span className="hl">SUBJECT.</span>
         </h1>
-        <p className="sub">
-          All 8 courses. Official NMAMIT syllabus, real textbooks, PYQs, GATE
-          cross&#8209;refs, and actual Coursera/YouTube picks — not guesses.
-        </p>
       </div>
 
       {visible.length > 0 ? (
