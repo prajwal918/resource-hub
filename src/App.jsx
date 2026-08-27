@@ -115,13 +115,11 @@ function QpView({ view, setView }) {
           {keys.map((id, i) => {
             const c = COURSES[id];
             return (
-              <a 
+              <button 
                 key={id} 
-                href="https://drive.google.com/drive/folders/1ImoEaL2ofZGbGsicYpshRxCuWcNev0JE?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={() => alert("Question papers are being migrated. Check back soon!")}
                 className="ccard ccard-enter" 
-                style={{ animationDelay: (i * 35) + "ms", textDecoration: "none", color: "var(--ink)" }}
+                style={{ animationDelay: (i * 35) + "ms", textDecoration: "none", color: "var(--ink)", textAlign: "left", cursor: "pointer", background: "none", border: "none", padding: 0 }}
               >
                 <div className="ccard-top">
                   <span className="ccard-code">{c.code}</span>
@@ -132,7 +130,7 @@ function QpView({ view, setView }) {
                     OPEN FOLDER →
                   </span>
                 </div>
-              </a>
+              </button>
             )
           })}
         </div>
